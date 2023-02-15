@@ -7,8 +7,9 @@ We hope that everything is fully clear and understandable.
 However, if you have any questions, please send us an email
 to support@webcat.app with the subject "Jr Fullstack Test Questions"
 */
-
-import $t from './libs/test.js'
+import $t from "./libs/test.js";
+import getTotals from "./utils/getTotals.js";
+import getBalanceByCategory from "./utils/getBalanceByCategory.js";
 
 /*
 1. Data manipulation:
@@ -33,12 +34,24 @@ import $t from './libs/test.js'
   Hint: Use native array methods as well as
     Lodash(https://lodash.com/docs) modules.
 */
-import _ from 'lodash'
-const source = $t.source(1)
+import _ from "lodash";
+const source = $t.source(1);
+
 $t.answer(1, async () => {
-  // Your code goes here
-  return 
-})
+  // Get the totals of the whole list
+  const { balance, income, expenses } = getTotals(source);
+  // We get the totals by category
+  const byCategories = getBalanceByCategory(source);
+
+  const target = {
+    balance,
+    income,
+    expenses,
+    byCategories,
+  };
+
+  return target;
+});
 
 /*
 2. Asynchronous programming: 
@@ -47,11 +60,18 @@ $t.answer(1, async () => {
   3. Finally, return the list of resulting texts as an array.
     
 */
-const $source = $t.source(2)
+const $source = $t.source(2);
 $t.answer(2, async () => {
-    // Your code goes here:
-    // 1. Get ids: $source.getIds()
-    // 2. Get text for every id: $source.getText(id)
-    // 3. Return array of texts
-    return 
-})
+  // 1. Get ids: $source.getIds()
+  const ids = await $source.getIds();
+
+  // 2. Get text for every id: $source.getText(id)
+  // We obtain an array of promises
+  const promiseArray = ids.map((id) => $source.getText(id));
+
+  // 3. Return array of texts
+  // We resolve the promises
+  const textArray = await Promise.all(promiseArray);
+
+  return textArray;
+});
